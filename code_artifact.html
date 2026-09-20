@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سیستم جامع مدیریت بیمارستان و کلینیک عمران | پلتفرم هوشمند شفاخانه</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Vazirmatn -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap" rel="stylesheet">
+    <!-- FontAwesome CDN for medical & UI icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Vazirmatn', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        },
+                        accent: {
+                            amber: '#f59e0b',
+                            emerald: '#10b981',
+                            rose: '#f43f5e',
+                            violet: '#8b5cf6'
+                        }
+                    },
+                    boxShadow: {
+                        'soft': '0 10px 30px -5px rgba(2, 132, 199, 0.08)',
+                        'glow': '0 0 25px rgba(14, 165, 233, 0.35)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+            overflow-x: hidden;
+        }
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(226, 232, 240, 0.9);
+        }
+        .grid-bg {
+            background-image: radial-gradient(rgba(14, 165, 233, 0.12) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        @keyframes pulse-slow {
+            0%, 100% { transform: scale(1); opacity: 0.7; }
+            50% { transform: scale(1.08); opacity: 0.3; }
+        }
+        .animate-pulse-slow {
+            animation: pulse-slow 8s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="selection:bg-brand-500 selection:text-white">
+
+<nav class="fixed top-0 left-0 right-0 z-50 glass-nav border-b border-slate-200/80 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+        <!-- Brand Logo -->
+        <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-600 to-brand-400 flex items-center justify-center text-white shadow-lg shadow-brand-500/30">
+                <i class="fa-solid fa-hospital text-xl"></i>
+            </div>
+            <div>
+                <span class="text-xl font-extrabold tracking-tight text-slate-900 block leading-tight">EMRAN CLINIC</span>
+                <span class="text-xs font-semibold text-brand-600 tracking-wide">سیستم جامع مدیریت بیمارستان</span>
+            </div>
+        </div>
+
+        <!-- Desktop Navigation Links -->
+        <div class="hidden lg:flex items-center gap-8 text-sm font-medium text-slate-600">
+            <a href="#workflow" class="hover:text-brand-600 transition-colors py-1 flex items-center gap-1.5">
+                <i class="fa-solid fa-diagram-project text-xs text-brand-500"></i> فلو کاری بیمار
+            </a>
+            <a href="#departments" class="hover:text-brand-600 transition-colors py-1 flex items-center gap-1.5">
+                <i class="fa-solid fa-network-wired text-xs text-brand-500"></i> ۴ پنل اصلی
+            </a>
+            <a href="#ui-preview" class="hover:text-brand-600 transition-colors py-1 flex items-center gap-1.5">
+                <i class="fa-solid fa-display text-xs text-brand-500"></i> محیط نرم‌افزار
+            </a>
+            <a href="#tax-defense" class="text-rose-600 hover:text-rose-700 transition-colors py-1 flex items-center gap-1.5 font-bold">
+                <i class="fa-solid fa-shield-halved text-xs text-rose-500"></i> ماژول مالیات (ویژه)
+            </a>
+            <a href="#features" class="hover:text-brand-600 transition-colors py-1 flex items-center gap-1.5">
+                <i class="fa-solid fa-wand-magic-sparkles text-xs text-brand-500"></i> مزیت‌های رقابتی
+            </a>
+        </div>
+
+        <!-- Call To Actions -->
+        <div class="flex items-center gap-3">
+            <a href="#demo-modal" onclick="openModal()" class="inline-flex items-center gap-2 bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-700 hover:to-brand-600 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-md shadow-brand-500/25 transition-all hover:scale-[1.02] active:scale-[0.98]">
+                <span>درخواست مشاوره و استقرار</span>
+                <i class="fa-solid fa-arrow-left text-xs"></i>
+            </a>
+            <!-- Mobile Menu Toggle Button -->
+            <button id="mobile-menu-btn" class="lg:hidden w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700 hover:bg-slate-200">
+                <i class="fa-solid fa-bars text-lg"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Mobile Dropdown Menu -->
+    <div id="mobile-menu" class="hidden lg:hidden border-t border-slate-200 bg-white/95 px-6 py-4 space-y-3 text-sm font-medium">
+        <a href="#workflow" class="block text-slate-700 py-2">فلو کاری بیمار</a>
+        <a href="#departments" class="block text-slate-700 py-2">چهار پنل اصلی سیستم</a>
+        <a href="#ui-preview" class="block text-slate-700 py-2">محیط کاربری نرم‌افزار</a>
+        <a href="#tax-defense" class="block text-rose-600 font-bold py-2">ماژول مدیریت مالیاتی</a>
+        <a href="#features" class="block text-slate-700 py-2">امکانات ویژه و فنی</a>
+    </div>
+</nav>
+
+<header class="relative pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden grid-bg">
+    <!-- Ambient glowing orbs -->
+    <div class="absolute top-20 -right-20 w-96 h-96 bg-brand-200/50 rounded-full blur-3xl pointer-events-none animate-pulse-slow"></div>
+    <div class="absolute bottom-0 -left-20 w-96 h-96 bg-cyan-200/40 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="text-center max-w-3xl mx-auto">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-50 border border-brand-200 text-brand-700 text-xs sm:text-sm font-bold mb-6 shadow-sm">
+                <span class="w-2 h-2 rounded-full bg-brand-500 animate-ping"></span>
+                نسل نوین نرم‌افزارهای دیتابیس بیمارستانی و کلینیکی در افغانستان
+            </div>
+
+            <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-[1.25] sm:leading-[1.2]">
+                مدیریت یکپارچه شفاخانه،
+                <span class="bg-gradient-to-r from-brand-600 via-brand-500 to-cyan-500 bg-clip-text text-transparent block mt-2">
+                    از اولین قدم تا ترخیص کامل
+                </span>
+            </h1>
+
+            <p class="mt-6 text-base sm:text-lg text-slate-600 leading-relaxed max-w-2xl mx-auto">
+                اتصال مستقیم و بلادرنگ پذیرش، مطب پزشکان، داروخانه هوشمند و لابراتوار تشخیصیه. بدون نیاز به بارکدخوان فیزیکی، با گزارش‌گیری دقیق سود و زیان و سپر امنیتی مالیاتی هوشمند.
+            </p>
+
+            <!-- Action buttons -->
+            <div class="mt-8 sm:mt-10 flex flex-wrap justify-center items-center gap-4">
+                <a href="#workflow" class="px-7 py-3.5 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm sm:text-base shadow-lg shadow-brand-600/30 transition-all hover:-translate-y-0.5 flex items-center gap-2">
+                    <i class="fa-solid fa-play text-xs"></i>
+                    <span>بررسی روند کار (Patient Flow)</span>
+                </a>
+                <a href="#tax-defense" class="px-7 py-3.5 rounded-2xl bg-white hover:bg-slate-50 text-slate-800 font-bold text-sm sm:text-base border border-slate-200 shadow-sm transition-all hover:border-slate-300 flex items-center gap-2">
+                    <i class="fa-solid fa-shield-halved text-rose-500"></i>
+                    <span>تست زنده قابلیت مالیاتی</span>
+                </a>
+            </div>
+
+            <!-- Key metrics bar -->
+            <div class="mt-14 pt-10 border-t border-slate-200/80 grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="text-right sm:text-center">
+                    <div class="text-2xl sm:text-3xl font-black text-brand-600 flex items-center justify-start sm:justify-center gap-1">
+                        <span>۴</span>
+                        <span class="text-lg font-normal text-slate-500">دپارتمان</span>
+                    </div>
+                    <p class="text-xs sm:text-sm text-slate-500 mt-1 font-medium">اتصال هم‌زمان و همگام</p>
+                </div>
+                <div class="text-right sm:text-center">
+                    <div class="text-2xl sm:text-3xl font-black text-emerald-600 flex items-center justify-start sm:justify-center gap-1">
+                        <span>۰%</span>
+                        <span class="text-lg font-normal text-slate-500">نیاز به بارکد</span>
+                    </div>
+                    <p class="text-xs sm:text-sm text-slate-500 mt-1 font-medium">بانک کامل داروها با قیمت</p>
+                </div>
+                <div class="text-right sm:text-center">
+                    <div class="text-2xl sm:text-3xl font-black text-cyan-600 flex items-center justify-start sm:justify-center gap-1">
+                        <span>دوزبانه</span>
+                    </div>
+                    <p class="text-xs sm:text-sm text-slate-500 mt-1 font-medium">خروجی PDF فارسی و انگلیسی</p>
+                </div>
+                <div class="text-right sm:text-center">
+                    <div class="text-2xl sm:text-3xl font-black text-amber-500 flex items-center justify-start sm:justify-center gap-1">
+                        <span>۱-کلیک</span>
+                    </div>
+                    <p class="text-xs sm:text-sm text-slate-500 mt-1 font-medium">کلید میانبر تعدیل مالیاتی</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<section id="workflow" class="py-20 bg-white relative">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-2xl mx-auto mb-16">
+            <span class="text-xs font-extrabold uppercase tracking-wider text-brand-600 bg-brand-50 px-3 py-1 rounded-full border border-brand-100">
+                گردش هوشمند اطلاعات
+            </span>
+            <h2 class="text-3xl font-extrabold text-slate-900 mt-3">جریان کاری یکپارچه بیمار (Patient Flow)</h2>
+            <p class="text-slate-600 text-sm sm:text-base mt-3">
+                تجربه‌ای بدون سردرگمی برای بیمار و بدون ناهماهنگی برای کادر درمانی؛ از ورود به لابی تا دریافت دارو.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
+            <!-- Step 1 -->
+            <div class="relative group">
+                <div class="glass-card p-6 rounded-3xl transition-all duration-300 hover:shadow-soft hover:-translate-y-1 h-full border-t-4 border-t-brand-500 flex flex-col justify-between">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center text-xl font-black mb-5 group-hover:bg-brand-600 group-hover:text-white transition-all shadow-sm">
+                            ۰۱
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-900 mb-2">پذیرش و ورود (Reception)</h3>
+                        <p class="text-sm text-slate-600 leading-relaxed">
+                            ثبت مشخصات بیمار، انتخاب پزشک معالج از لیست پزشکان شیفت حاضر، تسویه ویزیت اولیه (Fee) و تخصیص مستقیم به کارتابل پزشک.
+                        </p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-100 flex items-center gap-2 text-xs font-semibold text-brand-600">
+                        <i class="fa-solid fa-check-circle"></i>
+                        <span>ثبت در صف Waiting دکتر</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="relative group">
+                <div class="glass-card p-6 rounded-3xl transition-all duration-300 hover:shadow-soft hover:-translate-y-1 h-full border-t-4 border-t-brand-600 flex flex-col justify-between">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center text-xl font-black mb-5 group-hover:bg-brand-600 group-hover:text-white transition-all shadow-sm">
+                            ۰۲
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-900 mb-2">ویزیت و نسخه الکترونیک</h3>
+                        <p class="text-sm text-slate-600 leading-relaxed">
+                            پزشک پرونده بیمار را باز کرده، علائم حیاتی و تشخیص را وارد می‌کند. داروها را از فهرست جامع سیستم انتخاب و مستقیماً به داروخانه ارسال می‌کند.
+                        </p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-100 flex items-center gap-2 text-xs font-semibold text-brand-600">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>ارسال آنی به فارمسی و لابراتوار</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="relative group">
+                <div class="glass-card p-6 rounded-3xl transition-all duration-300 hover:shadow-soft hover:-translate-y-1 h-full border-t-4 border-t-accent-emerald flex flex-col justify-between">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl font-black mb-5 group-hover:bg-emerald-600 group-hover:text-white transition-all shadow-sm">
+                            ۰۳
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-900 mb-2">داروخانه هوشمند (Pharmacy)</h3>
+                        <p class="text-sm text-slate-600 leading-relaxed">
+                            داروساز نسخه را آماده می‌بیند. تمامی اقلام از قبل قیمت‌گذاری شده‌اند و نیازی به اسکن دستی نیست. قبض نسخه جهت پرداخت به پذیرش اطلاع داده می‌شود.
+                        </p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-100 flex items-center gap-2 text-xs font-semibold text-emerald-600">
+                        <i class="fa-solid fa-boxes-stacked"></i>
+                        <span>کسر اتوماتیک از موجودی انبار</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="relative group">
+                <div class="glass-card p-6 rounded-3xl transition-all duration-300 hover:shadow-soft hover:-translate-y-1 h-full border-t-4 border-t-accent-violet flex flex-col justify-between">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-violet-50 text-violet-600 flex items-center justify-center text-xl font-black mb-5 group-hover:bg-violet-600 group-hover:text-white transition-all shadow-sm">
+                            ۰۴
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-900 mb-2">لابراتوار و ترخیص کامل</h3>
+                        <p class="text-sm text-slate-600 leading-relaxed">
+                            در صورت نیاز به آزمایش، لابراتوار تست‌ها را ثبت و محاسبه سود سهم بیمارستان را انجام می‌دهد. بیمار قبض نهایی را تسویه و دارو را تحویل می‌گیرد.
+                        </p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-100 flex items-center gap-2 text-xs font-semibold text-violet-600">
+                        <i class="fa-solid fa-file-invoice-dollar"></i>
+                        <span>صدور فاکتور رسمی PDF دوزبانه</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="departments" class="py-20 bg-slate-50 border-y border-slate-200/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
+            <div>
+                <span class="text-xs font-extrabold uppercase tracking-wider text-brand-600 bg-brand-100/60 px-3 py-1 rounded-full">
+                    معماری چندکاربره سیستم
+                </span>
+                <h2 class="text-3xl font-extrabold text-slate-900 mt-2">چهار دپارتمان تخصصی برای همه شفاخانه</h2>
+            </div>
+            <p class="text-slate-500 text-sm max-w-md mt-4 md:mt-0">
+                برخلاف نرم‌افزارهای تک‌بخشی، این سیستم هر بخش را با سطح دسترسی و ابزارهای کامپیوتر اختصاصی مجهز می‌سازد.
+            </p>
+        </div>
+
+        <!-- Interactive Tabs Component -->
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-3 sm:p-6">
+            <!-- Tab Buttons -->
+            <div class="flex flex-wrap gap-2 pb-6 border-b border-slate-100" id="tabs-header">
+                <button onclick="switchTab('reception')" id="tab-btn-reception" class="tab-btn flex items-center gap-2.5 px-5 py-3 rounded-2xl text-sm font-bold transition-all bg-brand-600 text-white shadow-md shadow-brand-500/20">
+                    <i class="fa-solid fa-user-nurse text-base"></i>
+                    <span>داشبورد پذیرش (Reception)</span>
+                </button>
+                <button onclick="switchTab('doctor')" id="tab-btn-doctor" class="tab-btn flex items-center gap-2.5 px-5 py-3 rounded-2xl text-sm font-bold transition-all bg-slate-100 text-slate-600 hover:bg-slate-200">
+                    <i class="fa-solid fa-stethoscope text-base"></i>
+                    <span>داشبورد پزشکان (Doctor)</span>
+                </button>
+                <button onclick="switchTab('pharmacy')" id="tab-btn-pharmacy" class="tab-btn flex items-center gap-2.5 px-5 py-3 rounded-2xl text-sm font-bold transition-all bg-slate-100 text-slate-600 hover:bg-slate-200">
+                    <i class="fa-solid fa-prescription-bottle-medical text-base"></i>
+                    <span>داروخانه هوشمند (Pharmacy)</span>
+                </button>
+                <button onclick="switchTab('lab')" id="tab-btn-lab" class="tab-btn flex items-center gap-2.5 px-5 py-3 rounded-2xl text-sm font-bold transition-all bg-slate-100 text-slate-600 hover:bg-slate-200">
+                    <i class="fa-solid fa-flask-vial text-base"></i>
+                    <span>لابراتوار تشخیصیه (Lab)</span>
+                </button>
+            </div>
+
+            <!-- Tab 1: Reception -->
+            <div id="tab-content-reception" class="tab-pane pt-8">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    <div class="lg:col-span-5 space-y-4">
+                        <div class="inline-flex items-center gap-2 text-xs font-bold text-brand-600 bg-brand-50 px-3 py-1 rounded-lg">
+                            <i class="fa-solid fa-desktop"></i> مدیریت ورودی و حسابداری کلینیک
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-900">کنترل مراجعات، نوبت‌دهی و دخل روزمره</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">
+                            پذیرش مغز هماهنگ‌کننده کلینیک است. مسئول پذیرش در یک نگاه مراجعین امروز، لیست پزشکان فعال با تعرفه ویزیت (AFN Fee) و وضعیت پرداخت‌ها را مانیتور می‌کند.
+                        </p>
+                        <ul class="space-y-2.5 text-sm text-slate-700 pt-2">
+                            <li class="flex items-center gap-2.5">
+                                <i class="fa-solid fa-circle-check text-brand-500 text-sm"></i>
+                                <span>ثبت سریع مشخصات بیمار و تولید بارکد شناسایی و فاکتور</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <i class="fa-solid fa-circle-check text-brand-500 text-sm"></i>
+                                <span>مدیریت هزینه‌ها و مصارف متفرقه روزمره کلینیک (Add Expense)</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <i class="fa-solid fa-circle-check text-brand-500 text-sm"></i>
+                                <span>تفکیک درآمدهای روز: ویزیت دکتر، لابراتوار و عواید داروخانه</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="lg:col-span-7 bg-slate-100 p-4 sm:p-5 rounded-2xl border border-slate-200">
+                        <!-- Simulated Reception UI snippet -->
+                        <div class="bg-white rounded-xl shadow-sm p-4 border border-slate-200 space-y-4">
+                            <div class="flex items-center justify-between border-b pb-3">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-8 rounded-lg bg-brand-500 text-white flex items-center justify-center text-xs">
+                                        <i class="fa-solid fa-hospital-user"></i>
+                                    </div>
+                                    <span class="font-bold text-sm text-slate-800">Reception Dashboard</span>
+                                </div>
+                                <span class="bg-emerald-100 text-emerald-700 text-xs px-2.5 py-1 rounded-full font-bold">زنده / فعال</span>
+                            </div>
+                            <div class="grid grid-cols-3 gap-3 text-center">
+                                <div class="bg-emerald-50 border border-emerald-100 p-3 rounded-xl">
+                                    <span class="text-xs text-emerald-600 font-semibold block">Total Check-ins</span>
+                                    <span class="text-xl font-black text-emerald-700">۴۲</span>
+                                </div>
+                                <div class="bg-amber-50 border border-amber-100 p-3 rounded-xl">
+                                    <span class="text-xs text-amber-600 font-semibold block">Waiting Patients</span>
+                                    <span class="text-xl font-black text-amber-700">۲</span>
+                                </div>
+                                <div class="bg-brand-50 border border-brand-100 p-3 rounded-xl">
+                                    <span class="text-xs text-brand-600 font-semibold block">Total Revenue</span>
+                                    <span class="text-xl font-black text-brand-700">AFN 18,400</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Doctor -->
+            <div id="tab-content-doctor" class="tab-pane hidden pt-8">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    <div class="lg:col-span-5 space-y-4">
+                        <div class="inline-flex items-center gap-2 text-xs font-bold text-brand-600 bg-brand-50 px-3 py-1 rounded-lg">
+                            <i class="fa-solid fa-stethoscope"></i> پرونده سلامت و تشخیص
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-900">ویزیت بالینی و ثبت دقیق داروها</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">
+                            پزشک لیست مراجعین خود را با برچسب وضعیت (Waiting/Completed) می‌بیند. علائم حیاتی نظیر فشار خون، ضربان قلب، قند و وزن در پرونده دائم ثبت و ذخیره می‌گردند.
+                        </p>
+                        <ul class="space-y-2.5 text-sm text-slate-700 pt-2">
+                            <li class="flex items-center gap-2.5">
+                                <i class="fa-solid fa-circle-check text-brand-500 text-sm"></i>
+                                <span>دسترسی به تاریخچه مراجعات قبلی هر بیمار (سوابق پزشکی)</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <i class="fa-solid fa-circle-check text-brand-500 text-sm"></i>
+                                <span>انتخاب داروها از لیست داروهای انبار داروخانه کلینیک</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <i class="fa-solid fa-circle-check text-brand-500 text-sm"></i>
+                                <span>دکمه مستقیم Send to Pharmacy برای تسریع دارورسانی</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="lg:col-span-7 bg-slate-100 p-4 sm:p-5 rounded-2xl border border-slate-200">
+                        <div class="bg-white rounded-xl shadow-sm p-4 border border-slate-200 space-y-3">
+                            <div class="bg-brand-600 text-white p-3 rounded-xl flex justify-between items-center text-xs">
+                                <div>
+                                    <span class="font-bold">ویزیت: مبین حسنی</span>
+                                    <span class="opacity-80 block text-[10px]">دکتر مهدی یوسفی | ارولوژی</span>
+                                </div>
+                                <span class="bg-emerald-500/30 px-2 py-0.5 rounded text-white font-mono">Status: In Progress</span>
+                            </div>
+                            <div class="p-3 bg-slate-50 rounded-xl text-xs space-y-2 border">
+                                <div class="font-bold text-slate-700">علائم حیاتی ثبت شده:</div>
+                                <div class="grid grid-cols-3 gap-2 font-mono text-[11px] text-slate-600">
+                                    <div class="bg-white p-1.5 rounded border text-center">BP: 120/80</div>
+                                    <div class="bg-white p-1.5 rounded border text-center">Pulse: 72 bpm</div>
+                                    <div class="bg-white p-1.5 rounded border text-center">Temp: 37°C</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 3: Pharmacy -->
+            <div id="tab-content-pharmacy" class="tab-pane hidden pt-8">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    <div class="lg:col-span-5 space-y-4">
+                        <div class="inline-flex items-center gap-2 text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-lg">
+                            <i class="fa-solid fa-pills"></i> فارمسی بدون نیاز به اسکنر فیزیکی
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-900">کنترل موجودی، سود خرید و عواید فروش</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">
+                            تمام داروها از پیش با قیمت خرید و فروش در سیستم تعریف شده‌اند. نیازی به خرید اسکنرهای گران‌قیمت یا برچسب‌گذاری QR نیست؛ نسخه مستقیماً روی مانیتور تحویل‌دار ظاهر می‌شود.
+                        </p>
+                        <ul class="space-y-2.5 text-sm text-slate-700 pt-2">
+                            <li class="flex items-center gap-2.5">
+                                <i class="fa-solid fa-circle-check text-emerald-500 text-sm"></i>
+                                <span>گزارش ماهانه: چقدر دارو خریدیم، چقدر فروختیم و سود خالص چقدر بوده؟</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <i class="fa-solid fa-circle-check text-emerald-500 text-sm"></i>
+                                <span>شناسایی داروی پرفروش روز (Top Medicine) جهت سفارش به‌موقع</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <i class="fa-solid fa-circle-check text-emerald-500 text-sm"></i>
+                                <span>ارسال صورتحساب خودکار به پذیرش جهت دریافت فیس</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="lg:col-span-7 bg-slate-100 p-4 sm:p-5 rounded-2xl border border-slate-200">
+                        <div class="bg-white rounded-xl shadow-sm p-4 border border-slate-200 space-y-3">
+                            <div class="flex items-center justify-between text-xs font-bold text-slate-700 border-b pb-2">
+                                <span>آمار عملکرد فارمسی کلینیک</span>
+                                <span class="text-brand-600">ارز افغانی (AFN)</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3 text-xs">
+                                <div class="p-3 bg-slate-50 rounded-xl border">
+                                    <span class="text-slate-500 block mb-1">کل فروش ماهانه دارو:</span>
+                                    <span class="text-base font-black text-slate-800">AFN 142,500</span>
+                                </div>
+                                <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-200">
+                                    <span class="text-emerald-700 block mb-1">سود خالص داروخانه:</span>
+                                    <span class="text-base font-black text-emerald-700">+ AFN 48,200</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 4: Laboratory -->
+            <div id="tab-content-lab" class="tab-pane hidden pt-8">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    <div class="lg:col-span-5 space-y-4">
+                        <div class="inline-flex items-center gap-2 text-xs font-bold text-violet-600 bg-violet-50 px-3 py-1 rounded-lg">
+                            <i class="fa-solid fa-microscope"></i> خدمات تشخیصی و پاراکلینیکی
+                        </div>
+                        <h3 class="text-2xl font-bold text-slate-900">محاسبه دقیق سهم آزمایشگاه و ثبت تست‌ها</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">
+                            پزشک دستور آزمایش خون، سونوگرافی یا تست‌های تخصصی را صادر می‌کند. لابراتوار تست‌ها را انجام داده و دیتابیس به صورت خودکار سودآوری هر آزمایش و هزینه مواد مصرفی را استخراج می‌نماید.
+                        </p>
+                        <ul class="space-y-2.5 text-sm text-slate-700 pt-2">
+                            <li class="flex items-center gap-2.5">
+                                <i class="fa-solid fa-circle-check text-violet-500 text-sm"></i>
+                                <span>محاسبه سهم سود اختصاصی لابراتوار از هر معاینه</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <i class="fa-solid fa-circle-check text-violet-500 text-sm"></i>
+                                <span>اتصال بدون خطا به صورتحساب مالی مرکزی پذیرش</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <i class="fa-solid fa-circle-check text-violet-500 text-sm"></i>
+                                <span>چاپ برگ جواب آزمایش با سربرگ استاندارد بیمارستان</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="lg:col-span-7 bg-slate-100 p-4 sm:p-5 rounded-2xl border border-slate-200">
+                        <div class="bg-white rounded-xl shadow-sm p-4 border border-slate-200 text-xs space-y-3">
+                            <div class="flex justify-between font-bold text-slate-800 pb-2 border-b">
+                                <span>تست‌های فعال در لابراتوار</span>
+                                <span class="text-violet-600">Laboratory Pending Payments</span>
+                            </div>
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center p-2 rounded-lg bg-slate-50 border text-[11px]">
+                                    <span>آزمایش CBC و بیوشیمی خون (بیمار هادی صفدری)</span>
+                                    <span class="font-bold text-emerald-600">AFN 650 (Paid)</span>
+                                </div>
+                                <div class="flex justify-between items-center p-2 rounded-lg bg-slate-50 border text-[11px]">
+                                    <span>سونوگرافی شکم و لگن</span>
+                                    <span class="font-bold text-amber-600">AFN 800 (Pending)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section id="ui-preview" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-2xl mx-auto mb-16">
+            <span class="text-xs font-extrabold uppercase tracking-wider text-brand-600 bg-brand-50 px-3 py-1 rounded-full border border-brand-100">
+                طراحی منطبق بر نرم‌افزار واقعی
+            </span>
+            <h2 class="text-3xl font-extrabold text-slate-900 mt-3">نگاهی به اینترفیس فوق‌العاده شیک سیستم</h2>
+            <p class="text-slate-600 text-sm sm:text-base mt-2">
+                برگرفته از رابط کاربری واقعی شفاخانه عمران؛ خلوت، سریع و چشم‌نواز با رنگ‌های بهداشتی و استاندارد
+            </p>
+        </div>
+
+        <!-- Realistic Software Mockup Wrapper -->
+        <div class="rounded-3xl border border-slate-300/80 bg-slate-900 shadow-2xl p-2 sm:p-4 max-w-5xl mx-auto">
+            <!-- Mockup Window Header -->
+            <div class="flex items-center justify-between px-4 py-2 border-b border-slate-800">
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-rose-500 inline-block"></span>
+                    <span class="w-3 h-3 rounded-full bg-amber-500 inline-block"></span>
+                    <span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span>
+                </div>
+                <div class="text-slate-400 text-xs font-mono bg-slate-800 px-4 py-1 rounded-full flex items-center gap-2">
+                    <i class="fa-solid fa-lock text-[10px] text-emerald-400"></i>
+                    <span>emran-clinic.health/doctor/visit/41</span>
+                </div>
+                <div class="text-slate-500 text-xs">v3.4 Production</div>
+            </div>
+
+            <!-- Inside Mockup Content (Simulating doctor-visit and dashboard) -->
+            <div class="bg-[#f8fafc] rounded-2xl p-4 sm:p-6 text-slate-900 mt-2 space-y-6">
+                <!-- Top Mini bar -->
+                <div class="flex flex-wrap items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-slate-200">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center font-bold">
+                            <i class="fa-solid fa-user-doctor text-lg"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs text-slate-500 block">دکتر معالج:</span>
+                            <span class="text-sm font-black text-slate-800">دکتر مهدی یوسفی (Mahdi Yousofi) - Urology</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="bg-brand-50 text-brand-700 text-xs font-bold px-3 py-1.5 rounded-xl border border-brand-200">
+                            Visit #41 | مبین حسنی
+                        </span>
+                        <span class="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1.5 rounded-xl">
+                            وضعیت: Waiting
+                        </span>
+                    </div>
+                </div>
+
+                <!-- 2 Columns Clinical Info -->
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                    <!-- Left: Clinical Notes & Prescription -->
+                    <div class="md:col-span-8 space-y-4">
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 space-y-4 shadow-sm">
+                            <div class="flex items-center justify-between border-b pb-2">
+                                <h4 class="font-bold text-sm text-brand-700 flex items-center gap-2">
+                                    <i class="fa-solid fa-stethoscope"></i> Clinical Notes & Diagnosis
+                                </h4>
+                                <span class="text-xs text-slate-400">تاریخ: 2026/08/08</span>
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-500 block mb-1">تشخیص بیماری (Diagnosis):</label>
+                                <div class="bg-slate-50 p-2.5 rounded-xl border text-xs text-slate-700">
+                                    Acute upper respiratory infection - عفونت حاد تنفسی
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-500 block mb-1">داروهای تجویز شده (Prescriptions):</label>
+                                <div class="bg-brand-50/50 p-3 rounded-xl border border-brand-100 space-y-2">
+                                    <div class="flex justify-between items-center text-xs">
+                                        <span class="font-bold text-slate-800">۱. کپسول Amoxicillin 500mg</span>
+                                        <span class="text-slate-500 font-mono">تعداد: ۲۰ عدد - هر ۸ ساعت</span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-xs pt-2 border-t border-brand-100">
+                                        <span class="font-bold text-slate-800">۲. شربت Diphenhydramine</span>
+                                        <span class="text-slate-500 font-mono">تعداد: ۱ شیشه</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex justify-end pt-2">
+                                <span class="bg-brand-600 text-white text-xs px-4 py-2 rounded-xl font-bold flex items-center gap-1.5">
+                                    <i class="fa-solid fa-paper-plane text-[10px]"></i> Send to Pharmacy
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Patient Profile & Invoice -->
+                    <div class="md:col-span-4 space-y-4">
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+                            <h4 class="font-bold text-sm text-slate-800 flex items-center gap-2 border-b pb-2">
+                                <i class="fa-regular fa-id-card text-brand-600"></i> مشخصات بیمار
+                            </h4>
+                            <div class="text-xs space-y-2 text-slate-600">
+                                <div class="flex justify-between"><span>نام کامل:</span> <strong class="text-slate-900">مبین حسنی</strong></div>
+                                <div class="flex justify-between"><span>جنسیت:</span> <strong>آقا (Male)</strong></div>
+                                <div class="flex justify-between"><span>پزشک:</span> <strong>دکتر یوسفی</strong></div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+                            <div class="flex justify-between items-center text-xs">
+                                <span class="font-bold text-slate-800">Invoice #2026-5724</span>
+                                <span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded font-bold">PAID</span>
+                            </div>
+                            <div class="text-xs flex justify-between pt-2 border-t text-slate-600">
+                                <span>Doctor Visit Fee</span>
+                                <span class="font-bold text-slate-900">AFN 250</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="tax-defense" class="py-20 bg-gradient-to-b from-slate-900 to-slate-950 text-white relative overflow-hidden">
+    <!-- Red glowing alert background -->
+    <div class="absolute -top-40 -left-40 w-96 h-96 bg-rose-600/20 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            
+            <!-- Information text -->
+            <div class="lg:col-span-6 space-y-6">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/20 border border-rose-500/40 text-rose-300 text-xs font-bold">
+                    <i class="fa-solid fa-user-shield text-rose-400"></i>
+                    <span>ویژگی استراتژیک سازگار با شرایط اقتصادی افغانستان</span>
+                </div>
+
+                <h2 class="text-3xl sm:text-4xl font-black tracking-tight leading-tight">
+                    سیستم سوئیچ هوشمند مالیات
+                    <span class="text-rose-400 block mt-1">(Safe Fiscal Mode)</span>
+                </h2>
+
+                <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                    یکی از بزرگ‌ترین نگرانی‌های کلینیک‌ها و داکتران در افغانستان این است که نرم‌افزارهای کامپیوتری به دلیل شفافیت مطلق، تمامی عواید و سود خالص را عیان می‌کنند و در هنگام بازرسی اداره مالیات، مبالغ هنگفت و مالیات‌های کمرشکن تحمیل می‌شود.
+                </p>
+
+                <div class="bg-slate-800/80 border border-slate-700/80 p-5 rounded-2xl space-y-3">
+                    <div class="flex items-center gap-3 text-rose-400 font-bold text-sm">
+                        <i class="fa-solid fa-keyboard text-lg"></i>
+                        <span>تغییر با کلید میانبر مخفی (Shortcut Key)</span>
+                    </div>
+                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                        با فشردن یک کلید میانبر تعریف‌شده در صفحه حسابداری پذیرش، نرم‌افزار به صورت خودکار تمام درآمدهای واقعی، فروش دارو و حق‌الزحمه‌ها را <strong>تقسیم بر ۵۰</strong> می‌کند. دفاتر و راپورها بلافاصله با ارقام تعدیل‌شده ظاهر می‌شوند بدون اینکه به داده‌های اصلی صدمه‌ای وارد شود!
+                    </p>
+                </div>
+
+                <div class="flex items-center gap-4 text-xs text-slate-400">
+                    <div class="flex items-center gap-1.5"><i class="fa-solid fa-check text-emerald-400"></i> بدون برجا گذاشتن ردپا</div>
+                    <div class="flex items-center gap-1.5"><i class="fa-solid fa-check text-emerald-400"></i> بازگشت فوری به حالت عادی</div>
+                </div>
+            </div>
+
+            <!-- Interactive Demo Simulator Widget -->
+            <div class="lg:col-span-6">
+                <div class="bg-slate-800/90 border border-slate-700 rounded-3xl p-6 shadow-2xl backdrop-blur-md space-y-6">
+                    <div class="flex items-center justify-between border-b border-slate-700 pb-4">
+                        <div>
+                            <span class="text-xs text-slate-400 block font-mono">FINANCE LIVE PREVIEW</span>
+                            <span class="text-sm font-bold text-white">شبیه‌ساز زنده تعدیل حسابداری</span>
+                        </div>
+                        <div id="mode-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 border border-emerald-500/50 text-emerald-300 flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                            <span id="mode-text">وضعیت: حساب واقعی داخلی</span>
+                        </div>
+                    </div>
+
+                    <!-- Live Numbers in Simulator -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-slate-900/90 p-4 rounded-2xl border border-slate-800">
+                            <span class="text-xs text-slate-400 block mb-1">عواید کل (Total Revenue)</span>
+                            <div class="text-2xl font-black text-white" id="val-revenue">AFN 250,000</div>
+                            <span class="text-[11px] text-slate-500" id="sub-revenue">درآمد کلی روزانه شفاخانه</span>
+                        </div>
+                        <div class="bg-slate-900/90 p-4 rounded-2xl border border-slate-800">
+                            <span class="text-xs text-slate-400 block mb-1">سود خالص (Net Profit)</span>
+                            <div class="text-2xl font-black text-emerald-400" id="val-profit">AFN 95,000</div>
+                            <span class="text-[11px] text-slate-500" id="sub-profit">سود پس از کسر مصارف</span>
+                        </div>
+                        <div class="bg-slate-900/90 p-4 rounded-2xl border border-slate-800">
+                            <span class="text-xs text-slate-400 block mb-1">فروش داروخانه (Pharmacy)</span>
+                            <div class="text-2xl font-black text-cyan-400" id="val-pharmacy">AFN 110,000</div>
+                            <span class="text-[11px] text-slate-500" id="sub-pharmacy">داروهای توزیع شده</span>
+                        </div>
+                        <div class="bg-slate-900/90 p-4 rounded-2xl border border-slate-800">
+                            <span class="text-xs text-slate-400 block mb-1">تعداد مراجعین روز</span>
+                            <div class="text-2xl font-black text-amber-400" id="val-patients">۱۵۰ نفر</div>
+                            <span class="text-[11px] text-slate-500" id="sub-patients">ثبت شده در سیستم</span>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Switch Button -->
+                    <div class="pt-2">
+                        <button id="toggle-tax-btn" onclick="toggleTaxDefenseMode()" class="w-full py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-3 bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-700 hover:to-rose-800 text-white shadow-lg shadow-rose-900/50 transition-all hover:scale-[1.01] active:scale-[0.99]">
+                            <i class="fa-solid fa-bolt"></i>
+                            <span id="btn-tax-text">شبیه‌سازی فشردن کلید میانبر (تقسیم بر ۵۰ برای اداره مالیات)</span>
+                        </button>
+                        <p class="text-center text-[11px] text-slate-400 mt-2">
+                            با کلیک روی دکمه بالا، ارقام بالا را بررسی کنید تا تفاوت را لمس نمایید.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section id="features" class="py-20 bg-slate-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-2xl mx-auto mb-16">
+            <span class="text-xs font-extrabold uppercase tracking-wider text-brand-600 bg-brand-100/70 px-3 py-1 rounded-full">
+                کیفیت و توانایی نرم‌افزاری
+            </span>
+            <h2 class="text-3xl font-extrabold text-slate-900 mt-3">ویژگی‌هایی که کار کلینیک شما را متحول می‌کند</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+                <div class="w-12 h-12 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-file-pdf"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900">خروجی PDF دوزبانه (فارسی و انگلیسی)</h3>
+                <p class="text-slate-600 text-sm leading-relaxed">
+                    امکان تولید فوری نسخه‌ها، راپورهای عملکرد و فاکتورها به صورت فایل شکیل PDF با سربرگ اختصاصی نام کلینیک شما بدون افت فونت یا به‌هم‌ریختگی.
+                </p>
+            </div>
+
+            <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+                <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-barcode"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900">حذف وابستگی به بارکد و اسکنر</h3>
+                <p class="text-slate-600 text-sm leading-relaxed">
+                    دیگر نیازی به خرید اسکنرهای گران‌قیمت یا نصب برچسب بارکد روی ده‌ها هزار جعبه قرص نیست؛ بانک داروها کامل و آماده در سیستم مهیاست.
+                </p>
+            </div>
+
+            <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+                <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-receipt"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900">ثبت ریز مصارف روزانه (Expenses)</h3>
+                <p class="text-slate-600 text-sm leading-relaxed">
+                    از خرید چای و وسایل بهداشتی تا معاش پرسنل و کرایه؛ تمام مصارف در پایان هر شیفت کاری ثبت و از سرجمع عواید روز کسر می‌گردد.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-16 bg-white border-t border-slate-200">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div class="bg-gradient-to-r from-brand-600 via-brand-500 to-cyan-600 rounded-3xl p-8 sm:p-14 text-white shadow-xl shadow-brand-500/20 space-y-6">
+            <h2 class="text-2xl sm:text-4xl font-black">کلینیک یا بیمارستان خود را به سطح بین‌المللی برسانید</h2>
+            <p class="text-brand-50 text-sm sm:text-base max-w-xl mx-auto">
+                نصب، راه‌اندازی و آموزش کامل پرسنل پذیرش، داکتران و داروخانه در کوتاه‌ترین زمان. جهت دریافت مشاوره رایگان اطلاعات خود را ثبت نمایید.
+            </p>
+            <div class="pt-2">
+                <button onclick="openModal()" class="px-8 py-4 rounded-2xl bg-white text-brand-700 hover:bg-brand-50 font-black text-sm sm:text-base shadow-lg transition-all hover:scale-105">
+                    درخواست جلسه نمایش دمو و ثبت سفارش
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="bg-slate-950 text-slate-400 py-12 border-t border-slate-800 text-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-6 border-b border-slate-800/80 pb-8">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-brand-600 text-white flex items-center justify-center">
+                    <i class="fa-solid fa-hospital text-base"></i>
+                </div>
+                <div>
+                    <span class="text-white font-black text-base block">EMRAN CLINIC MANAGEMENT</span>
+                    <span class="text-xs text-slate-500">طراحی شده برای کلینیک‌ها و شفاخانه‌های افغانستان</span>
+                </div>
+            </div>
+            <div class="flex gap-6 text-xs text-slate-400">
+                <a href="#workflow" class="hover:text-white transition-colors">فلو کاری</a>
+                <a href="#departments" class="hover:text-white transition-colors">دپارتمان‌ها</a>
+                <a href="#tax-defense" class="hover:text-white transition-colors">مود مالیاتی</a>
+                <a href="#features" class="hover:text-white transition-colors">امکانات سیستم</a>
+            </div>
+        </div>
+        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mt-8 text-xs text-slate-500">
+            <p>© 2026 تمامی حقوق برای پلتفرم نرم‌افزاری بیمارستان و کلینیک محفوظ است.</p>
+            <p class="flex items-center gap-2">
+                <span>توسعه یافته با استانداردهای مدرن پایگاه داده</span>
+                <i class="fa-solid fa-heart text-rose-500 text-xs"></i>
+            </p>
+        </div>
+    </div>
+</footer>
+
+<div id="demo-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-sm hidden p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-slate-200 relative animate-in fade-in zoom-in duration-200">
+        <button onclick="closeModal()" class="absolute top-5 left-5 w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center text-sm">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div class="text-center mb-6">
+            <div class="w-12 h-12 rounded-2xl bg-brand-50 text-brand-600 mx-auto flex items-center justify-center text-xl mb-3">
+                <i class="fa-solid fa-calendar-check"></i>
+            </div>
+            <h3 class="text-xl font-bold text-slate-900">درخواست دمو و مشاوره</h3>
+            <p class="text-xs text-slate-500 mt-1">مشخصات کلینیک خود را وارد کنید تا کارشناسان ما با شما تماس بگیرند.</p>
+        </div>
+
+        <form onsubmit="handleFormSubmit(event)" class="space-y-4 text-xs">
+            <div>
+                <label class="font-bold text-slate-700 block mb-1">نام کلینیک یا شفاخانه:</label>
+                <input required type="text" placeholder="مثال: کلینیک تخصصی کابل" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-500 bg-slate-50">
+            </div>
+            <div>
+                <label class="font-bold text-slate-700 block mb-1">نام مسئول یا داکتر صاحب:</label>
+                <input required type="text" placeholder="نام و تخلص" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-500 bg-slate-50">
+            </div>
+            <div>
+                <label class="font-bold text-slate-700 block mb-1">شماره واتساپ / تماس:</label>
+                <input required type="tel" placeholder="07XXXXXXXX" dir="ltr" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-brand-500 bg-slate-50 text-right">
+            </div>
+            <div class="pt-2">
+                <button type="submit" class="w-full py-3.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm shadow-md shadow-brand-500/30 transition-all">
+                    ارسال درخواست دمو
+                </button>
+            </div>
+            <div id="form-msg" class="hidden text-center text-emerald-600 font-bold text-xs p-2 bg-emerald-50 rounded-lg">
+                درخواست شما با موفقیت ثبت شد. به زودی تماس حاصل خواهد شد.
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Tab Switching Logic
+    function switchTab(tabKey) {
+        // Hide all panes
+        const panes = document.querySelectorAll('.tab-pane');
+        panes.forEach(p => p.classList.add('hidden'));
+
+        // Reset all button styles
+        const buttons = document.querySelectorAll('.tab-btn');
+        buttons.forEach(b => {
+            b.classList.remove('bg-brand-600', 'text-white', 'shadow-md', 'shadow-brand-500/20');
+            b.classList.add('bg-slate-100', 'text-slate-600');
+        });
+
+        // Show selected pane
+        const targetPane = document.getElementById('tab-content-' + tabKey);
+        if (targetPane) {
+            targetPane.classList.remove('hidden');
+        }
+
+        // Highlight selected button
+        const targetBtn = document.getElementById('tab-btn-' + tabKey);
+        if (targetBtn) {
+            targetBtn.classList.remove('bg-slate-100', 'text-slate-600');
+            targetBtn.classList.add('bg-brand-600', 'text-white', 'shadow-md', 'shadow-brand-500/20');
+        }
+    }
+
+    // Tax Defense Interactive Demo Logic
+    let isSafeTaxMode = false;
+    const originalData = {
+        revenue: 'AFN 250,000',
+        profit: 'AFN 95,000',
+        pharmacy: 'AFN 110,000',
+        patients: '۱۵۰ نفر'
+    };
+
+    const dividedData = {
+        revenue: 'AFN 5,000',
+        profit: 'AFN 1,900',
+        pharmacy: 'AFN 2,200',
+        patients: '۳ نفر'
+    };
+
+    function toggleTaxDefenseMode() {
+        isSafeTaxMode = !isSafeTaxMode;
+        const revEl = document.getElementById('val-revenue');
+        const profEl = document.getElementById('val-profit');
+        const pharmEl = document.getElementById('val-pharmacy');
+        const patEl = document.getElementById('val-patients');
+        const badge = document.getElementById('mode-badge');
+        const badgeText = document.getElementById('mode-text');
+        const btnText = document.getElementById('btn-tax-text');
+
+        if (isSafeTaxMode) {
+            // Alter to /50
+            revEl.innerText = dividedData.revenue;
+            profEl.innerText = dividedData.profit;
+            pharmEl.innerText = dividedData.pharmacy;
+            patEl.innerText = dividedData.patients;
+
+            badge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-rose-500/20 border border-rose-500/50 text-rose-300 flex items-center gap-1.5';
+            badgeText.innerText = 'وضعیت: گزارش تعدیل شده مأمور مالیات (تقسیم بر ۵۰)';
+            btnText.innerText = 'بازگرداندن به حالت نرمال (کلید شورت‌کات مجدد)';
+        } else {
+            // Restore
+            revEl.innerText = originalData.revenue;
+            profEl.innerText = originalData.profit;
+            pharmEl.innerText = originalData.pharmacy;
+            patEl.innerText = originalData.patients;
+
+            badge.className = 'px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 border border-emerald-500/50 text-emerald-300 flex items-center gap-1.5';
+            badgeText.innerText = 'وضعیت: حساب واقعی داخلی';
+            btnText.innerText = 'شبیه‌سازی فشردن کلید میانبر (تقسیم بر ۵۰ برای اداره مالیات)';
+        }
+    }
+
+    // Modal Handling
+    function openModal() {
+        document.getElementById('demo-modal').classList.remove('hidden');
+    }
+    function closeModal() {
+        document.getElementById('demo-modal').classList.add('hidden');
+    }
+
+    function handleFormSubmit(e) {
+        e.preventDefault();
+        const msg = document.getElementById('form-msg');
+        msg.classList.remove('hidden');
+        setTimeout(() => {
+            closeModal();
+            msg.classList.add('hidden');
+        }, 2200);
+    }
+
+    // Mobile Menu Toggle
+    const mobileBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    if (mobileBtn && mobileMenu) {
+        mobileBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    }
+</script>
+
+</body>
+</html>
